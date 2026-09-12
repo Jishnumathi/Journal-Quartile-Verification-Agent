@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent 18 — Journal Quartile Verification Agent</title>
+  <meta name="description" content="Evidence-First Academic Journal Identity, Indexing, Quartile, and Risk Verification System.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="agent-badge">AGENT 18</span>
+        <h1>Journal Quartile Verification Agent</h1>
+      </div>
+      <div class="header-controls">
+        <span id="dbStatusBadge" class="status-indicator db-badge" title="SQLite Database Connection Status">
+          <span class="pulse-dot"></span> SQLite DB: Connected
+        </span>
+        <span id="healthStatusBadge" class="status-indicator">
+          <span class="pulse-dot"></span> Checking System APIs...
+        </span>
+        <button id="dbExplorerBtn" class="btn btn-secondary btn-sm">🗄️ Database Explorer</button>
+        <button id="runTestsBtn" class="btn btn-secondary btn-sm">⚡ Run 15-Test Suite</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-container">
+    
+    <!-- Left Panel: Verification Input Form -->
+    <section class="input-panel card">
+      <div class="panel-header">
+        <h2>Journal Verification Search</h2>
+        <span class="subtitle">Submit metadata or CFP text for evidence-first verification</span>
+      </div>
+
+      <!-- Quick Preset Selector -->
+      <div class="form-group">
+        <label for="presetSelect">🚀 Preset Test Samples</label>
+        <select id="presetSelect" class="form-control">
+          <option value="">-- Choose Sample Journal --</option>
+          <option value="nature">Nature (Print ISSN: 0028-0836)</option>
+          <option value="tpami">IEEE TPAMI (Scopus Q1 + JCR Q1)</option>
+          <option value="cfp">CFP Text Claim Test ("Scopus Q1 & Impact Factor")</option>
+          <option value="wrong_issn">Wrong ISSN + Valid Title (Conflict Test)</option>
+          <option value="mock_mode">MOCK Mode Full Verification</option>
+        </select>
+      </div>
+
+      <form id="verifyForm">
+        <div class="form-group">
+          <label for="journalName">Journal Name</label>
+          <input type="text" id="journalName" class="form-control" placeholder="e.g. Nature or IEEE Transactions on Pattern Analysis...">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="issn">ISSN (Print)</label>
+            <input type="text" id="issn" class="form-control" placeholder="0028-0836">
+          </div>
+          <div class="form-group col">
+            <label for="eissn">eISSN (Online)</label>
+            <input type="text" id="eissn" class="form-control" placeholder="1476-4687">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="journalUrl">Journal Official URL</label>
+          <input type="url" id="journalUrl" class="form-control" placeholder="https://www.nature.com/nature">
+        </div>
+
+        <div class="form-group">
+          <label for="cfpText">CFP / Call for Papers / Description Text</label>
+          <textarea id="cfpText" class="form-control" rows="3" placeholder="Paste CFP text e.g. 'Submit your paper to our Scopus Q1 journal with high Impact Factor...'"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="requestedYear">Requested Year</label>
+            <input type="number" id="requestedYear" class="form-control" value="2025">
+          </div>
+          <div class="form-group col">
+            <label for="requestedDatabase">Requested Database</label>
+            <select id="requestedDatabase" class="form-control">
+              <option value="Any">Any Database</option>
+              <option value="JCR">Clarivate JCR</option>
+              <option value="Scopus">Elsevier Scopus</option>
+              <option value="WoS">Web of Science</option>
+              <option value="SJR">SCImago SJR</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="institutionalPolicy">Institutional Requirements / Policy</label>
+          <input type="text" id="institutionalPolicy" class="form-control" placeholder="e.g. Scopus required, JCR Q1 required">
+        </div>
+
+        <div class="form-group">
+          <label for="verificationMode">Verification Mode</label>
+          <select id="verificationMode" class="form-control mode-selector">
+            <option value="PARTIAL" selected>PARTIAL (Use available open APIs + note unconfigured keys)</option>
+            <option value="LIVE">LIVE (Use all authorized API integrations)</option>
+            <option value="MOCK">MOCK (Demonstration with clearly labeled MOCK DATA)</option>
+          </select>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary btn-block">
+          <span>🔍 VERIFY JOURNAL</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- Right Panel: Verification Output Results -->
+    <section class="results-panel">
+
+      <!-- Default Placeholder -->
+      <div id="resultsPlaceholder" class="card empty-state">
+        <div class="empty-icon">🛡️</div>
+        <h3>Evidence-First Journal Verification</h3>
+        <p>Enter a Journal Name, ISSN, URL, or CFP text and click <strong>VERIFY JOURNAL</strong> to run identity resolution, index validation, quartile analysis, and risk scoring.</p>
+      </div>
+
+      <!-- Loading State Spinner -->
+      <div id="loadingState" class="card loading-state hidden">
+        <div class="spinner"></div>
+        <h3>Executing Agent 18 Verification Pipeline</h3>
+        <p id="loadingMsg">Querying Crossref, OpenAlex, Scopus, Clarivate, and Publisher endpoints...</p>
+      </div>
+
+      <!-- Live Results Container -->
+      <div id="resultsContainer" class="hidden">
+
+        <!-- Top Verdict Banner -->
+        <div class="card verdict-card" id="verdictBanner">
+          <div class="verdict-header">
+            <div class="verdict-title-area">
+              <span class="label">FINAL VERIFIED STATUS</span>
+              <div class="badge-wrapper">
+                <span id="verdictBadge" class="verdict-badge">VERIFIED</span>
+                <span id="modeBadge" class="mode-tag">PARTIAL MODE</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button id="viewReportBtn" class="btn btn-secondary btn-sm">📄 View Report</button>
+              <button id="exportJsonBtn" class="btn btn-secondary btn-sm">💾 Export JSON</button>
+            </div>
+          </div>
+
+          <div class="verdict-body">
+            <div class="verdict-metric">
+              <span class="metric-label">RECOMMENDATION</span>
+              <span id="recommendationText" class="recommendation-val">ACCEPT</span>
+            </div>
+            <div class="verdict-metric">
+              <span class="metric-label">IDENTITY CONFIDENCE</span>
+              <span id="identityConfidenceText" class="confidence-val">95%</span>
+            </div>
+            <div class="verdict-metric">
+              <span class="metric-label">RISK LEVEL</span>
+              <span id="riskLevelText" class="risk-val">LOW (0/100)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 1: Journal Identity -->
+        <div class="card result-card">
+          <div class="card-title">
+            <span>📚 Journal Identity Resolution</span>
+            <span id="identityStatusBadge" class="mini-badge">VERIFIED</span>
+          </div>
+          <div class="grid-2col">
+            <div><strong>Journal Name:</strong> <span id="resJournalName">-</span></div>
+            <div><strong>Print ISSN:</strong> <span id="resIssn">-</span></div>
+            <div><strong>Online eISSN:</strong> <span id="resEissn">-</span></div>
+            <div><strong>Canonical Publisher:</strong> <span id="resPublisher">-</span></div>
+            <div><strong>Official URL:</strong> <span id="resUrl">-</span></div>
+            <div><strong>Resolution Method:</strong> <span id="resMethod">-</span></div>
+          </div>
+        </div>
+
+        <!-- Section 2: Quartiles & Metrics -->
+        <div class="card result-card">
+          <div class="card-title">📊 Quartiles & Metrics Breakdown</div>
+          <div class="metrics-grid">
+            
+            <div class="metric-box">
+              <div class="box-header">Clarivate JCR</div>
+              <div id="jcrQuartile" class="quartile-badge q-na">N/A</div>
+              <div id="jcrValue" class="metric-sub">Impact Factor: Unavailable</div>
+              <div id="jcrLabel" class="metric-detail">-</div>
+            </div>
+
+            <div class="metric-box">
+              <div class="box-header">Scopus CiteScore</div>
+              <div id="citescoreQuartile" class="quartile-badge q-na">N/A</div>
+              <div id="citescoreValue" class="metric-sub">CiteScore: Unavailable</div>
+              <div id="citescoreLabel" class="metric-detail">-</div>
+            </div>
+
+            <div class="metric-box">
+              <div class="box-header">SCImago SJR</div>
+              <div id="sjrQuartile" class="quartile-badge q-na">N/A</div>
+              <div id="sjrValue" class="metric-sub">SJR: Unavailable</div>
+              <div id="sjrLabel" class="metric-detail">-</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section 3: Evidence Ledger -->
+        <div class="card result-card">
+          <div class="card-title">🧾 Authoritative Evidence Ledger</div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Authority</th>
+                  <th>Strength</th>
+                  <th>Claim</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="evidenceTableBody">
+                <!-- Dynamically Populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 4: Conflicts & Risk -->
+        <div class="grid-2col-cards">
+          <div class="card result-card">
+            <div class="card-title">⚠️ Conflicts & Discrepancies</div>
+            <div id="conflictsContainer">
+              <p class="text-muted">No conflicts detected.</p>
+            </div>
+          </div>
+
+          <div class="card result-card">
+            <div class="card-title">🔍 Risk Assessment</div>
+            <div id="riskContainer">
+              <p class="text-muted">Low risk evaluation.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4.5: RAG Grounded Explanations -->
+        <div class="card result-card rag-card">
+          <div class="card-title">
+            <span>🧠 AI-Assisted Grounded Explanations (RAG Extension)</span>
+            <span id="ragStatusBadge" class="mini-badge rag-badge">RAG ACTIVE</span>
+          </div>
+          <div id="ragExplanationsContainer">
+            <p class="text-muted">No AI-assisted explanations generated (falling back to plain structured output).</p>
+          </div>
+        </div>
+
+        <!-- Section 4.7: Alternative Journal Recommendations -->
+        <div class="card result-card" id="alternativesCard">
+          <div class="card-title">
+            <span>🚀 Recommended Alternative Venues (Peer-Reviewed Tier-1 Options)</span>
+            <span id="altCountBadge" class="mini-badge">RECOMMENDED</span>
+          </div>
+          <div id="alternativesContainer">
+            <p class="text-muted">Target journal satisfies quality standards. No alternative venues required.</p>
+          </div>
+        </div>
+
+        <!-- Section 5: Institutional Policy & Limitations -->
+        <div class="card result-card">
+          <div class="card-title">🏛️ Institutional Policy Evaluation</div>
+          <div id="policyContainer">
+            <p class="text-muted">No custom policy constraints specified.</p>
+          </div>
+        </div>
+
+        <!-- Section 5.5: Approved-Venue Management -->
+        <div class="card result-card">
+          <div class="card-title">📋 Institutional Approved-Venue Registry</div>
+          <div id="approvedVenuesContainer">
+            <p class="text-muted">Loading approved venues list...</p>
+          </div>
+        </div>
+
+        <div class="card result-card">
+          <div class="card-title">📌 System Limitations & Unconfigured Credentials</div>
+          <div id="limitationsContainer">
+            <p class="text-muted">None</p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Report Modal Overlay -->
+  <div id="reportModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Agent 18 Formal Verification Report</h3>
+        <button id="closeReportModalBtn" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="markdownReportText"></pre>
+      </div>
+      <div class="modal-footer">
+        <button id="copyReportBtn" class="btn btn-secondary">📋 Copy Markdown</button>
+        <button id="closeReportModalFooterBtn" class="btn btn-primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Database Explorer Modal Overlay -->
+  <div id="dbModal" class="modal-overlay hidden">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h3>🗄️ Sample SQLite Database Explorer</h3>
+          <span id="dbModalBadge" class="mini-badge">Connected: agent18_sample_database.sqlite</span>
+        </div>
+        <button id="closeDbModalBtn" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="db-controls-bar">
+          <input type="text" id="dbSearchInput" class="form-control" placeholder="Search sample database by title, ISSN, publisher...">
+          <button id="dbSeedBtn" class="btn btn-secondary btn-sm">🔄 Reset & Re-Seed DB</button>
+        </div>
+        <div id="dbTableWrapper" class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Journal Title</th>
+                <th>Print ISSN</th>
+                <th>eISSN</th>
+                <th>Publisher</th>
+                <th>Scopus</th>
+                <th>WoS</th>
+                <th>Metrics</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="dbJournalsTableBody">
+              <!-- Dynamically Populated from SQLite Database -->
+            </tbody>
+          </table>
+        </div>
+        <div id="dbJournalDetailView" class="db-detail-box hidden">
+          <h4>Journal Details & SQLite Metrics Records</h4>
+          <pre id="dbJournalDetailJson"></pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeDbModalFooterBtn" class="btn btn-primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

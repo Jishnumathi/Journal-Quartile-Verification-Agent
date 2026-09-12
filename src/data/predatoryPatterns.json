@@ -1,0 +1,44 @@
+[
+  {
+    "id": "PRED-001",
+    "category": "GUARANTEED_RAPID_REVIEW",
+    "pattern": "guarantees rapid review, fast-track acceptance or publication within 24 to 72 hours without peer review guarantee",
+    "description": "CFP or publisher claims guaranteed fast-track peer review or publication within an unrealistically short timeframe (24–72 hours).",
+    "sourceRef": "COPE & Think.Check.Submit. Guidelines"
+  },
+  {
+    "id": "PRED-002",
+    "category": "NON_AUTHORITATIVE_IMPACT_FACTOR",
+    "pattern": "claims impact factor from non-authoritative service like Global Impact Factor, Universal Impact Factor, or GISI",
+    "description": "Journal advertises unofficial or misleading metrics (e.g., GIF, UIF, International Impact Factor) rather than official Clarivate JCR.",
+    "sourceRef": "DOAJ Criteria & COPE Standards"
+  },
+  {
+    "id": "PRED-003",
+    "category": "IMMEDIATE_PAYMENT_BEFORE_REVIEW",
+    "pattern": "demands immediate article processing fee payment prior to peer review decision or editorial acceptance",
+    "description": "Requires upfront publication fee payment before manuscript peer review or editorial evaluation.",
+    "sourceRef": "Think.Check.Submit. Checklist"
+  },
+  {
+    "id": "PRED-004",
+    "category": "UNVERIFIED_EDITORIAL_BOARD",
+    "pattern": "lists editorial board members without institutional affiliations or explicit consent",
+    "description": "Publisher webpage or CFP lists fake, unverified, or non-consenting academic editorial board members.",
+    "sourceRef": "COPE Principles of Transparency"
+  },
+  {
+    "id": "PRED-005",
+    "category": "UNSUBSTANTIATED_INDEXING_CLAIM",
+    "pattern": "claims Web of Science, Scopus, or PubMed indexing despite absence from official catalog registries",
+    "description": "CFP or website claims indexing in major databases (Scopus, WoS) that cannot be confirmed via authoritative APIs.",
+    "sourceRef": "DOAJ Indexing Guidelines"
+  },
+  {
+    "id": "PRED-006",
+    "category": "TITLE_MIMICRY",
+    "pattern": "uses deceptive journal title closely mimicking a well-known authoritative academic publication",
+    "description": "Journal title mimics an established high-impact journal title with minor spelling variations.",
+    "sourceRef": "Think.Check.Submit."
+  }
+]

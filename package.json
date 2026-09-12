@@ -1,0 +1,29 @@
+{
+  "name": "agent18-journal-quartile-verifier",
+  "version": "1.0.0",
+  "description": "Agent 18 — Evidence-First Journal Quartile Verification Agent",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node tests/run-tests.js"
+  },
+  "keywords": [
+    "academic",
+    "journal",
+    "quartile",
+    "verification",
+    "scopus",
+    "wos",
+    "jcr",
+    "crossref",
+    "openalex"
+  ],
+  "author": "Antigravity Agent 18",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

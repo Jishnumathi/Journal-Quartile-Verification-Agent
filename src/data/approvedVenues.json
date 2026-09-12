@@ -1,0 +1,26 @@
+[
+  {
+    "id": "APP-001",
+    "journalName": "Nature",
+    "issn": "0028-0836",
+    "eissn": "1476-4687",
+    "approvingInstitution": "Global Institutional Research Board",
+    "approvalReason": "Premier multidisciplinary journal with top JCR and CiteScore metrics.",
+    "effectiveDate": "2024-01-01",
+    "expiryDate": "2027-12-31",
+    "status": "APPROVED",
+    "addedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "APP-002",
+    "journalName": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+    "issn": "0162-8828",
+    "eissn": "1939-3539",
+    "approvingInstitution": "School of Computer Science & Engineering",
+    "approvalReason": "Tier-1 IEEE journal indexed in Scopus & Web of Science.",
+    "effectiveDate": "2024-01-01",
+    "expiryDate": "2027-12-31",
+    "status": "APPROVED",
+    "addedAt": "2024-01-01T00:00:00.000Z"
+  }
+]
