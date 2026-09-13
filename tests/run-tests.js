@@ -6,6 +6,7 @@ const VerificationController = require('../src/services/verificationController')
 const RagTestSuite = require('./rag-tests');
 const ExpandedTestSuite = require('./expanded-tests');
 const DatabaseTestSuite = require('./database-tests');
+const SubagentTestSuite = require('./subagent-tests');
 
 class TestRunner {
   static async executeAllTests() {
@@ -140,8 +141,11 @@ class TestRunner {
     // Run Expanded Suite (30 Tests)
     const expandedResults = await ExpandedTestSuite.runExpandedTests();
 
-    const totalPassed = passed + ragResults.passed + dbResults.passed + expandedResults.passed;
-    const totalCount = 10 + ragResults.total + dbResults.total + expandedResults.total;
+    // Run Subagent & Orchestrator Suite (20 Tests)
+    const subagentResults = await SubagentTestSuite.runSubagentTests();
+
+    const totalPassed = passed + ragResults.passed + dbResults.passed + expandedResults.passed + subagentResults.passed;
+    const totalCount = 10 + ragResults.total + dbResults.total + expandedResults.total + subagentResults.total;
 
     console.log(`======================================================`);
     console.log(`  FINAL MASTER RESULTS: ${totalPassed} / ${totalCount} TESTS PASSED`);
@@ -154,7 +158,8 @@ class TestRunner {
       core: { passed, total: 10, results },
       rag: ragResults,
       database: dbResults,
-      expanded: expandedResults
+      expanded: expandedResults,
+      subagent: subagentResults
     };
   }
 }

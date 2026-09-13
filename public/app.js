@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. Form Submission
   verifyForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const payload = {
       journalName: document.getElementById('journalName').value,
       issn: document.getElementById('issn').value,
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('resIssn').textContent = contract.journalIdentity.issn || 'N/A';
     document.getElementById('resEissn').textContent = contract.journalIdentity.eissn || 'N/A';
     document.getElementById('resPublisher').textContent = contract.journalIdentity.publisher || 'N/A';
-    
+
     const urlElem = document.getElementById('resUrl');
     if (contract.journalIdentity.officialUrl) {
       urlElem.innerHTML = `<a href="${contract.journalIdentity.officialUrl}" target="_blank" style="color:var(--info-color)">${contract.journalIdentity.officialUrl}</a>`;
